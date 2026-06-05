@@ -1,0 +1,51 @@
+{
+    "image_size": [
+        300,
+        300
+    ],
+    "resize_size": 320,
+    "batch_size": 32,
+    "primary_output": "risk_output",
+    "primary_classes": [
+        "Low Risk",
+        "High Risk"
+    ],
+    "auxiliary_output": "lesion_output",
+    "auxiliary_classes": [
+        "AKIEC",
+        "BCC",
+        "BKL",
+        "MEL",
+        "NV"
+    ],
+    "high_risk_labels": [
+        "AKIEC",
+        "BCC",
+        "MEL"
+    ],
+    "high_risk_threshold": 0.5167636275291443,
+    "color_constancy": "shade_of_gray_p6",
+    "tta_views": 8,
+    "ensemble_snapshots": [
+        "dermascan_v6_snap0.keras",
+        "dermascan_v6_snap1.keras",
+        "dermascan_v6_snap2.keras"
+    ],
+    "dropped_classes": [
+        "DF",
+        "VASC"
+    ],
+    "model_architecture": "Multi-output Functional API with EfficientNetV2S backbone, CBAM-style attention, SE-style feature calibration, class-weighted CE loss, snapshot ensemble",
+    "preprocess_input": "handled inside keras.applications backbone with include_preprocessing=True; pass resized float32 images in 0-255 range after Shades of Gray color constancy",
+    "train_data": "train_balanced.csv",
+    "validation_data": "validation.csv",
+    "test_data": "test.csv",
+    "image_path_column": "image_path",
+    "risk_label_column": "risk_label",
+    "risk_index_column": "risk_idx",
+    "lesion_label_column": "label",
+    "lesion_index_column": "label_idx",
+    "saved_keras_model": "dermascan_multitask_high_low.keras",
+    "saved_model_dir": "dermascan_multitask_savedmodel",
+    "validation_test_note": "validation and test sets are not balanced or augmented"
+}

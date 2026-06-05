@@ -203,7 +203,6 @@ export default function Pemindaian() {
                   <span>ℹ️</span>
                   <p>
                     Gambar dikirim ke server lokal untuk diproses oleh model AI.
-                    Pastikan backend berjalan di port 8000.
                   </p>
                 </>
               )}
