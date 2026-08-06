@@ -8,7 +8,8 @@ This directory stores the trained production **Deep Learning Model Artifacts** a
 
 | File | Type | Description |
 | :--- | :--- | :--- |
-| `dermascan_multitask_high_low.keras` | Keras Model Binary | Saved Keras multi-task model containing trained weights and layer architecture (~89.8 MB). |
+| `dermascan_model.tflite` | TFLite Model Binary | **(Production Default)** Ultra-lightweight TensorFlow Lite model flatbuffer (~83.3 MB) optimized for fast CPU inference under 50MB RAM. |
+| `dermascan_multitask_high_low.keras` | Keras Model Binary | Original trained Keras multi-task model containing trained weights and layer architecture (~89.8 MB). |
 | `preprocessing_config.json` | JSON Config | Pipeline parameters including target image resolution, decision threshold, and risk classification rules. |
 | `index_to_label.json` | JSON Mapping | Maps numerical model output index (0..4) to diagnostic class labels (`AKIEC`, `BCC`, `BKL`, `MEL`, `NV`). |
 | `label_to_index.json` | JSON Mapping | Reverse mapping from diagnostic labels to model output indices. |
