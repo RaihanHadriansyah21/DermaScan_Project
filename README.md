@@ -96,15 +96,15 @@ graph LR
         LesionHead["5-Class Lesion Head"]
     end
 
-    UI -->|HTTP POST Image File| API
+    UI -->|"HTTP POST Image File"| API
     API --> CORS
     CORS --> Preprocess
-    Preprocess -->|Tensor Batch [1, 300, 300, 3]| KerasModel
+    Preprocess -->|"Tensor Batch (1, 300, 300, 3)"| KerasModel
     KerasModel --> RiskHead
     KerasModel --> LesionHead
-    RiskHead -->|Risk Probability| API
-    LesionHead -->|Class Probabilities| API
-    API -->|JSON Response| Display
+    RiskHead -->|"Risk Probability"| API
+    LesionHead -->|"Class Probabilities"| API
+    API -->|"JSON Response"| Display
 ```
 
 ---
