@@ -165,6 +165,8 @@ async def predict(file: UploadFile = File(...)):
             detail=f"Terjadi kesalahan saat memproses gambar: {str(e)}",
         )
     finally:
-        # Clean up uploaded file
+        # Clean up uploaded file and free memory
         if os.path.exists(image_path):
             os.remove(image_path)
+        import gc
+        gc.collect()

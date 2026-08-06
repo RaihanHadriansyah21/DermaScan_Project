@@ -13,10 +13,24 @@ import os
 import zipfile
 import tempfile
 import shutil
+
+# Limit TensorFlow CPU memory & thread usage for cloud hosting (Railway)
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["TF_NUM_INTRAOP_THREADS"] = "1"
+os.environ["TF_NUM_INTEROP_THREADS"] = "1"
+
 import numpy as np
+from PIL import Image, ImageOps
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
+
+try:
+    tf.config.threading.set_inter_op_parallelism_threads(1)
+    tf.config.threading.set_intra_op_parallelism_threads(1)
+except Exception:
+    pass
 
 
 # ---------------------------------------------------------------------------
@@ -125,20 +139,25 @@ def shade_of_gray(image, power=6):
 
 
 def preprocess_single_image(path):
-    """Load and preprocess one image for inference.
+    """Load and preprocess one image for inference using Pillow & TensorFlow.
 
     Pipeline:
-    1. Read & decode to RGB float32
-    2. Shades of Gray color constancy (power=6)
-    3. Resize with padding to RESIZE_SIZE x RESIZE_SIZE
-    4. Center crop/pad to IMG_SIZE
-    5. Keep pixel range 0-255 (backbone handles normalization internally)
+    1. Safe load & EXIF transpose via Pillow
+    2. Convert to RGB float32 tensor
+    3. Shades of Gray color constancy (power=6)
+    4. Resize with padding to RESIZE_SIZE x RESIZE_SIZE
+    5. Center crop/pad to IMG_SIZE
+    6. Keep pixel range 0-255 (backbone handles normalization internally)
     """
-    image = tf.io.read_file(path)
-    image = tf.image.decode_image(image, channels=3, expand_animations=False)
-    image = tf.cast(image, tf.float32)
+    with Image.open(path) as img:
+        img = ImageOps.exif_transpose(img)
+        img = img.convert("RGB")
+        # Resize first with PIL to conserve memory
+        img = img.resize((RESIZE_SIZE, RESIZE_SIZE), Image.Resampling.BILINEAR)
+        img_np = np.array(img, dtype=np.float32)
+
+    image = tf.convert_to_tensor(img_np, dtype=tf.float32)
     image = shade_of_gray(image, power=6)
-    image = tf.image.resize_with_pad(image, RESIZE_SIZE, RESIZE_SIZE)
     image = tf.image.resize_with_crop_or_pad(image, IMG_SIZE[0], IMG_SIZE[1])
     return image
 
