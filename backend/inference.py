@@ -257,13 +257,47 @@ def _patch_keras_file(original_path):
     return patched_path, tmp_dir
 
 
+class TFLiteModelWrapper:
+    """Wrapper around tf.lite.Interpreter to mimic Keras model call interface."""
+
+    def __init__(self, model_path):
+        self.interpreter = tf.lite.Interpreter(model_path=model_path)
+        self.interpreter.allocate_tensors()
+        self.input_details = self.interpreter.get_input_details()
+        self.output_details = self.interpreter.get_output_details()
+
+    def __call__(self, image_batch, training=False):
+        if hasattr(image_batch, "numpy"):
+            input_data = image_batch.numpy()
+        else:
+            input_data = np.asarray(image_batch)
+
+        self.interpreter.set_tensor(self.input_details[0]["index"], input_data)
+        self.interpreter.invoke()
+
+        out_0 = self.interpreter.get_tensor(self.output_details[0]["index"])
+        out_1 = self.interpreter.get_tensor(self.output_details[1]["index"])
+
+        # Return (risk_output, lesion_output)
+        if out_0.shape[-1] == 2:
+            return out_0, out_1
+        return out_1, out_0
+
+
 def load_dermascan_model(model_path):
-    """Load the saved .keras model with custom objects registered.
+    """Load the saved model (.tflite or .keras).
 
     Handles Keras version mismatch by stripping keys like
     `quantization_config` that were added in Keras 3.4+ but are
     not recognized by older versions.
     """
+    import logging
+    logger = logging.getLogger("dermascan")
+
+    if model_path.endswith(".tflite"):
+        logger.info("Loading memory-efficient TFLite model from %s ...", model_path)
+        return TFLiteModelWrapper(model_path)
+
     custom_objects = {
         "ChannelSpatialAttention": ChannelSpatialAttention,
         "FeatureCalibrationLayer": FeatureCalibrationLayer,
@@ -281,8 +315,6 @@ def load_dermascan_model(model_path):
             raise  # Unrelated error, re-raise
 
     # Patched loading: strip incompatible keys from the .keras zip
-    import logging
-    logger = logging.getLogger("dermascan")
     logger.warning(
         "Direct model load failed (Keras version mismatch). "
         "Applying config patch to strip incompatible keys..."
@@ -375,8 +407,10 @@ def predict_dermascan(models, image_path, threshold=None, use_tta=False):
         else:
             outputs = model(image_batch, training=False)
             risk_output, lesion_output = unpack_model_outputs(outputs)
-            risk_output = risk_output.numpy()
-            lesion_output = lesion_output.numpy()
+            if hasattr(risk_output, "numpy"):
+                risk_output = risk_output.numpy()
+            if hasattr(lesion_output, "numpy"):
+                lesion_output = lesion_output.numpy()
 
         all_risk.append(risk_output)
         all_lesion.append(lesion_output)

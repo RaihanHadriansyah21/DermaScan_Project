@@ -29,7 +29,11 @@ from lesion_info import get_lesion_info
 # ---------------------------------------------------------------------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODELS_DIR = os.path.join(BASE_DIR, "production-models")
-MODEL_PATH = os.path.join(MODELS_DIR, "dermascan_multitask_high_low.keras")
+TFLITE_MODEL_PATH = os.path.join(MODELS_DIR, "dermascan_model.tflite")
+KERAS_MODEL_PATH = os.path.join(MODELS_DIR, "dermascan_multitask_high_low.keras")
+
+# Prefer memory-efficient TFLite model for cloud deployment (Railway)
+MODEL_PATH = TFLITE_MODEL_PATH if os.path.exists(TFLITE_MODEL_PATH) else KERAS_MODEL_PATH
 CONFIG_PATH = os.path.join(MODELS_DIR, "preprocessing_config.json")
 UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
 
