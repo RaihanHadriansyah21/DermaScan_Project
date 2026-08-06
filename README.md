@@ -332,11 +332,11 @@ This project was developed collaboratively by **Capstone Team CC26-PRU448**:
 
 | Member | Role | Key Contributions |
 | :--- | :--- | :--- |
-| **Eka Safari** | Data Scientist | Conducted ISIC dataset collection, data cleaning, and class augmentation pipeline setup. |
-| **Septiyana Putri** | Data Scientist | Performed Exploratory Data Analysis (EDA), class imbalance mitigation, and model evaluation metrics analysis. |
-| **Mohammad Raihan Hadriansyah Prasetya** | AI Engineer | Designed multi-task EfficientNetV2 architecture with CBAM attention, performed TFLite quantization & backend integration. |
-| **Muhammad Fahmi Hadyan Haq** | AI Engineer | Implemented FastAPI REST microservice, CORS middleware, inference request handling, and Railway cloud deployment. |
-| **Edward Riadi** | Full Stack Developer | Developed React SPA user interface, drag-and-drop uploader, dynamic risk gauge visualizer, and Vercel frontend deployment. |
+| **Eka Safari** | Data Scientist | Conducted ISIC dataset collection, data cleaning, image normalization, and class augmentation pipeline setup. |
+| **Septiyana Putri** | Data Scientist | Performed Exploratory Data Analysis (EDA), class imbalance mitigation strategy, and model evaluation metrics analysis. |
+| **Muhammad Fahmi Hadyan Haq** | Machine Learning Engineer | Developed and trained the multi-task EfficientNetV2 deep learning architecture with CBAM attention layers, generating the production `.keras` model. |
+| **Mohammad Raihan Hadriansyah Prasetya** | AI & Cloud Engineer | Performed TFLite model conversion & quantization, developed FastAPI REST microservice, managed Railway & Vercel cloud deployments, and led full-stack system integration. |
+| **Edward Riadi** | Full Stack Developer | Developed React SPA user interface, drag-and-drop file uploader component, dynamic risk gauge visualizer, and frontend UX components. |
 
 ---
 
