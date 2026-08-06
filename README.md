@@ -308,7 +308,7 @@ curl -X POST "https://dermascanproject-production.up.railway.app/api/predict" \
 
 | 1. Landing Page | 2. Upload & Scanning Image | 3. AI Prediction Result |
 | :---: | :---: | :---: |
-| ![Landing Page](https://via.placeholder.com/400x250/0f172a/ffffff?text=1.+Landing+Page) | ![Upload Image](https://via.placeholder.com/400x250/0f172a/ffffff?text=2.+Upload+Image) | ![AI Prediction Result](https://via.placeholder.com/400x250/0f172a/ffffff?text=3.+AI+Prediction+Result) |
+| ![Landing Page](docs/screenshots/landing-page.png) | ![Upload & Scanning Image](docs/screenshots/upload-scanning.png) | ![AI Prediction Result](docs/screenshots/prediction-result.png) |
 
 ---
 
