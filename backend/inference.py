@@ -142,17 +142,31 @@ def preprocess_single_image(path):
     """Load and preprocess one image for inference using Pillow & TensorFlow.
 
     Pipeline:
-    1. Safe load & EXIF transpose via Pillow
-    2. Convert to RGB float32 tensor
+    1. Fast JPEG draft decode & EXIF transpose via Pillow
+    2. Instant downscaling to max 512px before converting to float32 (conserves RAM)
     3. Shades of Gray color constancy (power=6)
-    4. Resize with padding to RESIZE_SIZE x RESIZE_SIZE
-    5. Center crop/pad to IMG_SIZE
-    6. Keep pixel range 0-255 (backbone handles normalization internally)
+    4. Center crop/pad to IMG_SIZE (300x300)
     """
     with Image.open(path) as img:
-        img = ImageOps.exif_transpose(img)
+        # 1. Draft decode for JPEGs to decode directly at lower resolution
+        try:
+            if hasattr(img, "draft"):
+                img.draft("RGB", (RESIZE_SIZE, RESIZE_SIZE))
+        except Exception:
+            pass
+
+        # 2. Handle EXIF orientation
+        try:
+            img = ImageOps.exif_transpose(img)
+        except Exception:
+            pass
+
         img = img.convert("RGB")
-        # Resize first with PIL to conserve memory
+
+        # 3. Downscale immediately if photo is large (conserve RAM on Railway)
+        if img.width > 512 or img.height > 512:
+            img.thumbnail((512, 512), Image.Resampling.BILINEAR)
+
         img = img.resize((RESIZE_SIZE, RESIZE_SIZE), Image.Resampling.BILINEAR)
         img_np = np.array(img, dtype=np.float32)
 
