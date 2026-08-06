@@ -1,4 +1,4 @@
-# 🩸 DermaScan — AI-Powered Skin Lesion Risk Classification & Analysis
+# 🩸 DermaScan — AI-Powered Decision Support System for Skin Lesion Risk Stratification
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![TensorFlow](https://img.shields.io/badge/TensorFlow-2.15%2B-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white)](https://www.tensorflow.org/)
@@ -9,15 +9,17 @@
 
 > **DermaScan** is an end-to-end medical AI application that utilizes multi-task deep neural networks and computer vision to analyze skin lesions, compute risk stratification scores, classify specific lesion categories, and deliver educational medical insights.
 
+Developed as a Capstone Team Project for **Coding Camp 2026 powered by DBS Foundation** (Team **CC26-PRU448**).
+
 🌐 **Live Web Application**: [https://dermascan-azure.vercel.app/](https://dermascan-azure.vercel.app/)
 
 ---
 
 ## 📌 Executive Summary
 
-Early detection of malignant skin lesions (such as Melanoma and Basal Cell Carcinoma) dramatically improves clinical outcomes. **DermaScan** bridges advanced deep learning computer vision with accessible web technology, providing users and healthcare practitioners with rapid, automated skin lesion analysis.
+Early detection of malignant skin lesions (such as Melanoma and Basal Cell Carcinoma) dramatically improves clinical survival rates. **DermaScan** serves as a Decision Support System bridging deep learning computer vision with accessible web technology, providing users and healthcare practitioners with rapid, automated skin lesion analysis.
 
-The system features a **Multi-Task EfficientNetV2 Architecture** enhanced with **Convolutional Block Attention Modules (CBAM)** and **Feature Calibration Layers**. It simultaneously performs:
+The system features a **Multi-Task Transfer Learning CNN (EfficientNetV2)** enhanced with **Convolutional Block Attention Modules (CBAM)** and **Feature Calibration Layers**. It simultaneously performs:
 1. **Binary Risk Stratification**: Classifying lesions into *Low Risk* vs. *High Risk*.
 2. **Multi-Class Categorization**: Predicting specific diagnostic lesion types across 5 primary clinical categories.
 
@@ -30,7 +32,7 @@ The system features a **Multi-Task EfficientNetV2 Architecture** enhanced with *
 ✔ **Ultra-Low Memory TFLite Inference**: Converted Keras backbone into an optimized TensorFlow Lite (`.tflite`) flatbuffer model, reducing server RAM usage to **<50 MB** with sub-200ms latency.  
 ✔ **Color Constancy Preprocessing**: Utilizes Shades of Gray algorithm (power=6) to normalize lighting variances and skin tone differences across capture devices.  
 ✔ **Pillow Draft Downscaling**: Handles high-resolution camera uploads without memory spikes or server OOM errors.  
-✔ **Interactive Confidence Visualization**: Dynamic risk gauge and class probability distribution breakdowns.  
+✔ **Interactive Confidence Visualization**: Dynamic risk gauge meter and class probability distribution breakdowns.  
 ✔ **Integrated Medical Education**: Interactive guidance on skin lesion types, self-examination protocols, and clinical disclaimers.  
 ✔ **Production-Ready REST API**: Fully validated OpenAPI/FastAPI endpoints with CORS configuration, health checks, and error handling.  
 
@@ -60,22 +62,22 @@ The system features a **Multi-Task EfficientNetV2 Architecture** enhanced with *
 
 ```mermaid
 flowchart TD
-    A[User Uploads Skin Image] --> B[Pillow Input Sanitization & EXIF Normalization]
-    B --> C[Shades of Gray Color Constancy Preprocessing]
-    C --> D[Aspect-Ratio Resizing & Center Crop 300x300]
-    D --> E[Multi-Task EfficientNetV2 + CBAM Feature Extractor]
-    E --> F1[Binary Risk Head - Sigmoid]
-    E --> F2[Multi-Class Lesion Head - Softmax]
-    F1 --> G1[Risk Stratification: Low Risk / High Risk]
-    F2 --> G2[Lesion Categorization: 5 Classes]
-    G1 --> H[JSON Response Payload & Medical Disclaimer]
+    A["User Uploads Skin Image"] --> B["Pillow Input Sanitization & EXIF Normalization"]
+    B --> C["Shades of Gray Color Constancy Preprocessing"]
+    C --> D["Aspect-Ratio Resizing & Center Crop (300x300)"]
+    D --> E["Multi-Task EfficientNetV2 + CBAM Feature Extractor"]
+    E --> F1["Binary Risk Head (Sigmoid)"]
+    E --> F2["Multi-Class Lesion Head (Softmax)"]
+    F1 --> G1["Risk Stratification: Low Risk / High Risk"]
+    F2 --> G2["Lesion Categorization: 5 Classes"]
+    G1 --> H["JSON Response Payload & Medical Disclaimer"]
     G2 --> H
-    H --> I[React UI Visualization & Risk Gauge]
+    H --> I["React UI Visualization & Risk Gauge"]
 ```
 
 ---
 
-## 🏗️ System Architecture
+## 🏗️ System Architecture & Workflow
 
 ```mermaid
 graph LR
@@ -92,7 +94,7 @@ graph LR
     end
 
     subgraph ModelLayer["AI Engine"]
-        KerasModel["Multi-Task Keras Model (.keras)"]
+        KerasModel["Multi-Task TFLite Model (.tflite)"]
         RiskHead["Binary Risk Classifier"]
         LesionHead["5-Class Lesion Head"]
     end
@@ -114,40 +116,43 @@ graph LR
 
 ```text
 DermaScan_Project/
+├── CODE_OF_CONDUCT.md               # Community Behavior Guidelines
+├── CONTRIBUTING.md                  # Guidelines for Contributors
 ├── LICENSE                          # MIT License
-├── README.md                        # Main Project Documentation
+├── README.md                        # Main Repository Documentation
 ├── .gitignore                       # Git exclusion rules
 ├── backend/                         # FastAPI Backend Microservice
 │   ├── README.md                    # Backend Documentation
 │   ├── app.py                       # FastAPI Application Entrypoint & Routes
-│   ├── inference.py                 # Keras Model Loader & Inference Engine
+│   ├── inference.py                 # TFLite/Keras Loader & Inference Engine
 │   ├── lesion_info.py               # Medical Lesion Knowledgebase
-│   ├── Procfile                     # Railway Deployment Start Command
+│   ├── Procfile                     # Railway Start Command
 │   ├── nixpacks.toml                # Railway Buildpack Configuration
 │   ├── requirements.txt             # Python Dependencies
-│   └── production-models/           # AI Model Artifacts & Preprocessing Metadata
-│       ├── README.md                # Model & Weight Documentation
-│       ├── dermascan_multitask_high_low.keras  # Saved Multi-Task Keras Model (89.8 MB)
-│       ├── preprocessing_config.json # Pipeline Preprocessing Parameters
+│   └── production-models/           # AI Model Artifacts & Metadata
+│       ├── README.md                # Model Artifact Documentation
+│       ├── dermascan_model.tflite   # Production TFLite Model (83.3 MB)
+│       ├── dermascan_multitask_high_low.keras # Saved Keras Model (89.8 MB)
+│       ├── preprocessing_config.json # Pipeline Parameters
 │       ├── index_to_label.json      # Index-to-Lesion Mapping
 │       ├── index_to_risk.json       # Index-to-Risk Mapping
 │       ├── label_to_index.json      # Lesion-to-Index Mapping
 │       └── risk_to_index.json       # Risk-to-Index Mapping
-└── frontend/                        # React Frontend Web Application
+└── frontend/                        # React Frontend Application
     ├── README.md                    # Frontend Documentation
-    ├── package.json                 # Node.js Dependencies & Scripts
-    ├── vite.config.js               # Vite Configuration
+    ├── package.json                 # Node.js Manifest & Scripts
+    ├── vite.config.js               # Vite Bundler Configuration
     ├── index.html                   # HTML Entrypoint
     ├── .env.example                 # Environment Variable Template
     └── src/                         # Application Source Code
         ├── main.jsx                 # React DOM Root
         ├── App.jsx                  # Main Application Component
-        ├── index.css                # Design System & Custom CSS Tokens
+        ├── index.css                # Design System & Styling
         ├── components/              # Modular UI Components
         │   ├── Header.jsx           # App Navigation Bar
-        │   ├── ImageUploader.jsx    # Drag-and-Drop File Upload
-        │   ├── PredictionResult.jsx # AI Diagnostic Results Display
-        │   └── EducationCard.jsx    # Medical Information Card
+        │   ├── ImageUploader.jsx    # Image Dropzone Component
+        │   ├── PredictionResult.jsx # Prediction Results Display
+        │   └── EducationCard.jsx    # Medical Knowledge Cards
         └── services/                # API Integration Layer
             └── api.js               # Backend Fetch Wrapper
 ```
@@ -191,8 +196,8 @@ pip install -r requirements.txt
 # Start backend dev server
 uvicorn app:app --reload --host 0.0.0.0 --port 8000
 ```
-Backend server will start at: `http://localhost:8000`  
-Interactive API Docs (Swagger): `http://localhost:8000/docs`
+Backend API will start at: `http://localhost:8000`  
+Swagger API Documentation: `http://localhost:8000/docs`
 
 ---
 
@@ -204,7 +209,7 @@ cd frontend
 # Install Node.js dependencies
 npm install
 
-# Configure local environment variables
+# Configure environment variables
 cp .env.example .env
 ```
 Edit `.env` for local development:
@@ -212,15 +217,15 @@ Edit `.env` for local development:
 VITE_API_URL=http://localhost:8000
 ```
 
-Start Vite dev server:
+Start Vite development server:
 ```bash
 npm run dev
 ```
-Frontend application will be accessible at: `http://localhost:5173`
+Frontend web application will run at: `http://localhost:5173`
 
 ---
 
-## 🔬 Model Architecture & Training Details
+## 🔬 Model Overview & Training Details
 
 DermaScan utilizes a custom **Multi-Task Transfer Learning Network**:
 
@@ -274,24 +279,24 @@ curl -X POST "https://dermascanproject-production.up.railway.app/api/predict" \
 ```json
 {
   "risk_label": "High Risk",
-  "risk_probability": 0.8924,
+  "risk_probability": 0.859,
   "risk_threshold": 0.55,
   "lesion_label": "MEL",
-  "lesion_probability": 0.8412,
+  "lesion_probability": 0.859,
   "lesion_probabilities": {
-    "AKIEC": 0.0211,
-    "BCC": 0.0413,
-    "BKL": 0.0152,
-    "MEL": 0.8412,
-    "NV": 0.0812
+    "AKIEC": 0.007,
+    "BCC": 0.001,
+    "BKL": 0.097,
+    "MEL": 0.859,
+    "NV": 0.037
   },
   "is_high_risk_lesion": true,
   "ensemble_size": 1,
   "tta_enabled": false,
   "lesion_info": {
     "name": "Melanoma (MEL)",
-    "description": "Tipe kanker kulit yang paling berbahaya...",
-    "recommendation": "Sangat disarankan untuk segera melakukan konsultasi dengan dokter spesialis kulit."
+    "description": "Jenis kanker kulit paling berbahaya yang berasal dari sel penghasil pigmen...",
+    "recommendation": "SEGERA konsultasikan dengan dokter spesialis kulit atau onkologi kulit."
   },
   "disclaimer": "Hasil prediksi ini dihasilkan oleh model AI dan BUKAN diagnosis medis..."
 }
@@ -301,31 +306,36 @@ curl -X POST "https://dermascanproject-production.up.railway.app/api/predict" \
 
 ## 🖼️ Application Screenshots
 
-| Landing & Scanning View | Prediction Results View |
-| :---: | :---: |
-| ![Landing Page](https://via.placeholder.com/600x350/0f172a/ffffff?text=DermaScan+Scanning+Interface) | ![Prediction View](https://via.placeholder.com/600x350/0f172a/ffffff?text=DermaScan+AI+Prediction+Results) |
+| 1. Landing Page | 2. Upload & Scanning Image | 3. AI Prediction Result |
+| :---: | :---: | :---: |
+| ![Landing Page](https://via.placeholder.com/400x250/0f172a/ffffff?text=1.+Landing+Page) | ![Upload Image](https://via.placeholder.com/400x250/0f172a/ffffff?text=2.+Upload+Image) | ![AI Prediction Result](https://via.placeholder.com/400x250/0f172a/ffffff?text=3.+AI+Prediction+Result) |
 
 ---
 
-## 🗺️ Engineering Roadmap & Future Improvements
+## 🗺️ Future Improvements
 
 - [ ] **Vision Transformer (ViT) Architecture**: Benchmark Swin Transformer and ViT against EfficientNetV2 backbones.
 - [ ] **Explainable AI (XAI)**: Integrate Grad-CAM heatmaps to highlight visual regions driving AI decisions.
 - [ ] **Mobile Application**: Cross-platform React Native / Flutter client with offline TFLite inference.
 - [ ] **User Authentication & Assessment History**: Secure user accounts with session history tracking.
-- [ ] **Multi-Class Expansion**: Extend taxonomy from 5 to 10+ skin disease categories (including Psoriasis and Eczema).
+- [ ] **Multi-Class Expansion**: Extend taxonomy from 5 to 10+ skin disease categories.
 - [ ] **Medical PDF Report Generation**: Export diagnostic summaries with disclaimer notes for healthcare providers.
 - [ ] **Containerization**: Full Docker Compose setup for localized single-command orchestration.
 - [ ] **CI/CD Pipeline**: GitHub Actions for automated linting, unit testing, and deployment triggers.
 
 ---
 
-## 👥 Capstone Team & Acknowledgments
+## 👥 Team Contributions
 
-This project was developed as a Capstone Project for **Dicoding Bangkit Academy / Google Program**:
+This project was developed collaboratively by **Capstone Team CC26-PRU448**:
 
-- **Team ID**: `CC26-PRU448`
-- **Domain**: Machine Learning & Cloud Computing / Web Development
+| Member | Role | Key Contributions |
+| :--- | :--- | :--- |
+| **Eka Safari** | Data Scientist | Conducted ISIC dataset collection, data cleaning, and class augmentation pipeline setup. |
+| **Septiyana Putri** | Data Scientist | Performed Exploratory Data Analysis (EDA), class imbalance mitigation, and model evaluation metrics analysis. |
+| **Mohammad Raihan Hadriansyah Prasetya** | AI Engineer | Designed multi-task EfficientNetV2 architecture with CBAM attention, performed TFLite quantization & backend integration. |
+| **Muhammad Fahmi Hadyan Haq** | AI Engineer | Implemented FastAPI REST microservice, CORS middleware, inference request handling, and Railway cloud deployment. |
+| **Edward Riadi** | Full Stack Developer | Developed React SPA user interface, drag-and-drop uploader, dynamic risk gauge visualizer, and Vercel frontend deployment. |
 
 ---
 
@@ -333,4 +343,4 @@ This project was developed as a Capstone Project for **Dicoding Bangkit Academy 
 
 This project is licensed under the [MIT License](LICENSE).
 
-> **🚨 Important Medical Disclaimer**: DermaScan is an educational and research tool created for algorithmic demonstration purposes. It is **NOT** a certified medical diagnostic device and does **NOT** replace professional medical advice, diagnosis, or treatment. Always consult a qualified dermatologist for skin health concerns.
+> **🚨 Important Medical Disclaimer**: DermaScan is an educational decision support tool created for algorithmic research purposes. It is **NOT** a certified medical diagnostic device and does **NOT** replace professional medical advice, diagnosis, or treatment. Always consult a qualified dermatologist for skin health concerns.
