@@ -1,21 +1,16 @@
 # Python
 backend/venv/
 backend/__pycache__/
+backend/uploads/*
+!backend/uploads/.gitkeep
 
-# React/Vite
-frontend/node_modules/
-frontend/dist/
-
-backend/venv/
-backend/__pycache__/
-
+# React / Vite
 frontend/node_modules/
 frontend/dist/
 frontend/.env
+frontend/.env.local
 
-# Environment
-frontend/.env
-
-# OS
+# OS & Temp
 .DS_Store
 Thumbs.db
+*.pyc
