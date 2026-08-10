@@ -30,7 +30,7 @@ The system features a **Multi-Task Transfer Learning CNN (EfficientNetV2)** enha
 
 ✔ **Multi-Task Deep Learning**: Dual-head architecture predicting both binary risk levels and multi-class lesion taxonomy in a single forward pass.  
 ✔ **Attention-Enhanced Feature Extraction**: Incorporates spatial and channel attention (CBAM) to focus on clinically relevant lesion boundaries.  
-✔ **Ultra-Low Memory TFLite Inference**: Converted Keras backbone into an optimized TensorFlow Lite (`.tflite`) flatbuffer model, reducing server RAM usage to **<50 MB** with sub-200ms latency.  
+✔ **Lightweight TFLite Inference**: Converted Keras backbone into an optimized TensorFlow Lite (`.tflite`) flatbuffer model, reducing memory footprint for fast serverless execution.  
 ✔ **Color Constancy Preprocessing**: Utilizes Shades of Gray algorithm (power=6) to normalize lighting variances and skin tone differences across capture devices.  
 ✔ **Pillow Draft Downscaling**: Handles high-resolution camera uploads without memory spikes or server OOM errors.  
 ✔ **Interactive Confidence Visualization**: Dynamic risk gauge meter and class probability distribution breakdowns.  
