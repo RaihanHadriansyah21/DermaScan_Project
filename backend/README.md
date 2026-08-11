@@ -1,76 +1,45 @@
-# ⚙️ DermaScan Backend — FastAPI Microservice
+# DermaScan backend
 
-This directory contains the production-grade **FastAPI REST API** and **Deep Learning Inference Engine** for the DermaScan application.
+FastAPI inference service for the DermaScan educational skin-lesion decision-support prototype.
 
----
+## Responsibilities
 
-## 📌 Purpose & Architecture
+1. Validate JPG/PNG multipart uploads.
+2. Correct EXIF orientation, resize images, apply Shades of Gray color constancy, and center crop/pad to 300×300.
+3. Load the TFLite artifact when available, with a Keras fallback.
+4. Return binary risk and five-class lesion probabilities with educational metadata and a medical disclaimer.
+5. Expose health and prediction endpoints to the React client.
 
-The backend microservice handles:
-1. **HTTP Multipart Request Handling**: Accepts skin lesion images (JPG, JPEG, PNG).
-2. **Image Preprocessing**: Color constancy adjustment via Shades of Gray algorithm, EXIF rotation correction, and resizing.
-3. **Model Deserialization & Execution**: Loads the saved multi-task Keras model with custom registered layers (`ChannelSpatialAttention`, `FeatureCalibrationLayer`).
-4. **Post-Processing & Medical Knowledge Enrichment**: Formats output probabilities, evaluates risk thresholds, and attaches diagnostic guidance.
-5. **CORS & Error Management**: Implements CORS middleware for cross-origin requests from Vercel web client.
-
----
-
-## 📁 Directory Contents
+## Files
 
 ```text
-backend/
-├── app.py                       # FastAPI application entrypoint & API routes
-├── inference.py                 # Keras model loading, custom layers & preprocessing pipeline
-├── lesion_info.py               # Medical knowledgebase mapping lesion classes to descriptions
-├── Procfile                     # Deployment start command for Railway / Heroku
-├── nixpacks.toml                # Build configuration for Nixpacks builder
-├── requirements.txt             # Python dependencies
-├── uploads/                     # Temporary uploaded image staging folder
-└── production-models/           # Saved Keras model binary (.keras) & JSON config mappings
+app.py                    FastAPI app, routes, validation, and CORS
+inference.py              preprocessing, custom Keras layers, model wrappers, inference
+lesion_info.py            educational lesion descriptions and recommendations
+requirements.txt          Python runtime dependencies
+Procfile                  Railway process command
+nixpacks.toml             Railway build configuration
+production-models/        inference artifacts, mappings, and preprocessing configuration
 ```
 
----
+## Local development
 
-## 🚀 Local Development Setup
-
-### 1. Environment Setup
 ```bash
-python -m venv venv
-
-# Windows:
-.\venv\Scripts\Activate.ps1
-
-# Linux/macOS:
-source venv/bin/activate
+python -m venv .venv
+python -m pip install -r requirements.txt
+uvicorn app:app --reload --host 127.0.0.1 --port 8000
 ```
 
-### 2. Install Dependencies
+- OpenAPI UI: `http://127.0.0.1:8000/docs`
+- Health: `GET /api/health`
+- Prediction: `POST /api/predict` with a multipart `file`
+
+The model files under `production-models/` are required. This service is an educational prototype and does not provide a medical diagnosis.
+
+## Railway configuration
+
+The repository includes a Procfile/Nixpacks configuration for running:
+
 ```bash
-pip install -r requirements.txt
+uvicorn app:app --host 0.0.0.0 --port $PORT
 ```
-
-### 3. Run Development Server
-```bash
-uvicorn app:app --reload --host 0.0.0.0 --port 8000
-```
-
-Access Swagger Documentation:  
-`http://localhost:8000/docs`
-
----
-
-## 📡 API Specification
-
-### `GET /api/health`
-Checks backend service availability and model status.
-
-### `POST /api/predict`
-Accepts multipart image upload and returns prediction JSON.
-
----
-
-## ☁️ Deployment (Railway)
-
-The backend is configured for deployment on Railway using Nixpacks/Procfile:
-- **Root Directory**: `/backend`
-- **Start Command**: `uvicorn app:app --host 0.0.0.0 --port $PORT`
